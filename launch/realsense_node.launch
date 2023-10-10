@@ -2,25 +2,23 @@
 
   <include file="$(find realsense2_camera)/launch/rs_camera.launch">
     <arg name="json_file_path" value="$(find trackdlo)/config/preset_decimation_4.0_depth_step_100.json" />
-    <arg name="publish_tf" value="false" />
     <arg name="filters" value="pointcloud,temporal,decimation" />
-    <arg name="depth_fps" value="15" />
+    <arg name="depth_fps" value="10" />
     <arg name="depth_height" value="720" />
     <arg name="depth_width" value="1280" />
-    <arg name="color_fps" value="15" />
+    <arg name="color_fps" value="10" />
     <arg name="color_height" value="720" />
     <arg name="color_width" value="1280" />
     <arg name="align_depth" value="true" />
     <arg name="ordered_pc" value="true" />
   </include>
-
-  <node pkg="tf" type="static_transform_publisher" name="base_link_to_camera_color_optical_frame_tf" args="0.5308947503950723 0.030109485611943067 0.5874 -0.7071068 0.7071068 0 0 base_link camera_color_optical_frame 10" />
-  <node pkg="tf" type="static_transform_publisher" name="camera_color_optical_frame_to_camera_color_frame_tf" args="0 0 0 0.5 -0.5 0.5 0.5 camera_color_optical_frame camera_color_frame 10" />
-  <node pkg="tf" type="static_transform_publisher" name="camera_color_frame_to_camera_link_tf" args="-0.000351057737134 -0.0148385819048 -0.000117231989861 0.00429561594501 0.000667857821099 -0.00226634810679 0.999987959862 camera_color_optical_frame camera_color_frame 10" />
-  <node pkg="tf" type="static_transform_publisher" name="camera_link_to_camera_depth_frame_tf" args="0 0 0 0 0.0 0.0 1.0 camera_color_optical_frame camera_color_frame 10" />
-  <node pkg="tf" type="static_transform_publisher" name="camera_depth_frame_to_camera_depth_optical_frame_tf" args="0 0 0 -0.5 0.5 -0.5 0.5 camera_depth_frame camera_depth_optical_frame 10" />
+  
+  <!-- <node pkg="tf" type="static_transform_publisher" name="link_6_to_camera_color_optical_frame_tf" args="0.0131191 0.0345247 -0.0382688 0.720125 -0.6938341 -0.0023252 0.0029631 link_6 camera_color_optical_frame 10" /> -->
+  
+  <node pkg="tf" type="static_transform_publisher" name="link_6_to_camera_link_tf" args="0.01367676, 0.01953508, -0.03825736 -0.0120744, 0.7099908, 0.0078629, 0.7040636 link_6 camera_link 10" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_link_6_tf" args="0.374, 0.000, 0.630 0 0 0 1 base_link link_6 10" />
 
   <!-- tracking rviz file -->
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find trackdlo)/rviz/tracking.rviz" />
+  <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find trackdlo)/rviz/tracking.rviz" /> -->
 
 </launch>
