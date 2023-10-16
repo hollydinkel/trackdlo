@@ -12,10 +12,10 @@
     <arg name="align_depth" value="true" />
     <arg name="ordered_pc" value="true" />
   </include>
-  
-  <!-- <node pkg="tf" type="static_transform_publisher" name="link_6_to_camera_color_optical_frame_tf" args="0.0131191 0.0345247 -0.0382688 0.720125 -0.6938341 -0.0023252 0.0029631 link_6 camera_color_optical_frame 10" /> -->
-  
-  <node pkg="tf" type="static_transform_publisher" name="link_6_to_camera_link_tf" args="0.01367676, 0.01953508, -0.03825736 -0.0120744, 0.7099908, 0.0078629, 0.7040636 link_6 camera_link 10" />
+
+  <!-- <node pkg="tf" type="static_transform_publisher" name="link_6_to_camera_color_optical_frame_tf" args="0.0131191 0.0345247 -0.0382688 0.708756, -0.7054088, -0.0062758, 0.0048991 link_6 camera_color_optical_frame 10" /> -->
+
+  <node pkg="tf" type="static_transform_publisher" name="link_6_to_camera_link_tf" args="0.01801587 0.0156162 -0.03926776 0.00038930373662151424 0.7130193860400215 -0.002601741316836596 0.7011393830871517 link_6 camera_link 10" />
   <node pkg="tf" type="static_transform_publisher" name="base_link_to_link_6_tf" args="0.374, 0.000, 0.630 0 0 0 1 base_link link_6 10" />
 
   <!-- tracking rviz file -->
