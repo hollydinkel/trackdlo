@@ -131,6 +131,7 @@ def callback (rgb, depth):
         header.stamp = rospy.Time.now()
         converted_points = pcl2.create_cloud(header, fields, pc_colored)
         pc_pub.publish(converted_points)
+        # rospy.signal_shutdown('Finished initial node set computation.')
     except:
         rospy.logerr("Failed to extract splines.")
         rospy.signal_shutdown('Stopping initialization.')
@@ -160,7 +161,6 @@ if __name__=='__main__':
     camera_info_sub = rospy.Subscriber(camera_info_topic, CameraInfo, camera_info_callback)
     rgb_sub = message_filters.Subscriber(rgb_topic, Image)
     depth_sub = message_filters.Subscriber(depth_topic, Image)
-    trackdlo_sub = rospy.Subscriber('/trackdlo/results_pc', PointCloud2, received_new_messages)
 
     # header
     header = std_msgs.msg.Header()
