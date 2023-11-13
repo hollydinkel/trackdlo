@@ -40,7 +40,7 @@ def orientation(p, q, r):
     # See https://www.geeksforgeeks.org/orientation-3-ordered-points/amp/ 
     # for details of below formula. 
       
-    val = (float(q.y - p.y) * (r.x - q.x)) - (float(q.x - p.x) * (r.y - q.y))
+    val = (np.float64(q.y - p.y) * (r.x - q.x)) - (np.float64(q.x - p.x) * (r.y - q.y))
     if (val > 0):
           
         # Clockwise orientation
@@ -213,7 +213,7 @@ def extract_connected_skeleton (visualize_process, mask, img_scale=10, seg_lengt
                 break
 
             # graph for visualization
-            mask = cv2.line(mask, contour[i][0], contour[i+1][0], 255, 1)
+            mask = cv2.line(mask, tuple(contour[i][0]), tuple(contour[i+1][0]), 255, 1)
 
             # if haven't initialized, perform initialization
             if cur_seg_start_point is None:

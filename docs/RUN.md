@@ -16,7 +16,7 @@ Installation and execution of TrackDLO was verified with the below dependencies 
 * [Pillow](https://pillow.readthedocs.io/en/stable/installation.html)
 * [ROS Numpy](https://pypi.org/project/rosnumpy/)
 
-We also provide Docker files for compatibility with other system configurations. Refer to the [DOCKER.md](https://github.com/RMDLO/trackdlo/blob/master/docs/DOCKER.md) for more information on using docker, and see the docker [requirements.txt](https://github.com/RMDLO/trackdlo/blob/master/docker/requirements.txt) file for a list of the tested versions of TrackDLO package dependencies.
+We also provide Docker files for compatibility with other system configurations. Refer to the ![DOCKER.md](https://github.com/RMDLO/trackdlo/blob/master/docs/DOCKER.md) for more information on using docker, and see the docker ![requirements.txt](https://github.com/RMDLO/trackdlo/blob/master/docker/requirements.txt) file for a list of the tested versions of TrackDLO package dependencies.
 
 ## Other Requirements
 
