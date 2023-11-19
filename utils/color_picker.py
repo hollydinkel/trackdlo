@@ -51,20 +51,21 @@ while(1):
     lower = np.array([hMin, sMin, vMin])
     upper = np.array([hMax, sMax, vMax])
 
-    # Create HSV Image and threshold into a range.
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, lower, upper)
-    output = cv2.bitwise_and(img,img, mask= mask)
-
     # Print if there is a change in HSV value
     if( (phMin != hMin) | (psMin != sMin) | (pvMin != vMin) | (phMax != hMax) | (psMax != sMax) | (pvMax != vMax) ):
-        print("(hMin = %d , sMin = %d, vMin = %d), (hMax = %d , sMax = %d, vMax = %d)" % (hMin , sMin , vMin, hMax, sMax , vMax))
+        print("HSV min: (%d %d %d), HSV max: (%d %d %d)" % (hMin, sMin, vMin, hMax, sMax, vMax))
         phMin = hMin
         psMin = sMin
         pvMin = vMin
         phMax = hMax
         psMax = sMax
         pvMax = vMax
+
+    # Create HSV Image and threshold into a range.
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv.copy(), lower, upper)
+
+    output = cv2.bitwise_and(img, img, mask= mask)
 
     # Display output image
     cv2.imshow('image',output)
