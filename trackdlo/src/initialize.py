@@ -85,8 +85,8 @@ def callback (rgb, depth):
         pixel_y = all_pixel_coords[:, 0]
         # if the first mask value is not in the tip mask, reverse the pixel order
         if multi_color_dlo:
-            pixel_value1 = mask_tip[pixel_y[0],pixel_x[0]]
-            if pixel_value1 == 0:
+            pixel_value1 = mask_tip[pixel_y[-1],pixel_x[-1]]
+            if pixel_value1 == 255:
                 pixel_x, pixel_y = pixel_x[::-1], pixel_y[::-1]
 
         pc_x = (pixel_x - cx) * pc_z / f
