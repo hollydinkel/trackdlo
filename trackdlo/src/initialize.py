@@ -26,25 +26,20 @@ def camera_info_callback (info):
     camera_info_sub.unregister()
 
 def color_thresholding (hsv_image, cur_depth):
-    # --- rope blue ---
-    lower = (90, 90, 60)
-    upper = (130, 255, 255)
-    mask_dlo = cv2.inRange(hsv_image, lower, upper).astype('uint8')
+    global lower, upper
 
-    # --- tape red ---
-    lower = (130, 60, 40)
-    upper = (255, 255, 255)
-    mask_red_1 = cv2.inRange(hsv_image, lower, upper).astype('uint8')
-    lower = (0, 60, 40)
-    upper = (10, 255, 255)
-    mask_red_2 = cv2.inRange(hsv_image, lower, upper).astype('uint8')
-    mask_marker = cv2.bitwise_or(mask_red_1.copy(), mask_red_2.copy()).astype('uint8')
+    mask_dlo = cv2.inRange(hsv_image.copy(), lower, upper).astype('uint8')
+
+    # tape green
+    lower_green = (58, 130, 50)
+    upper_green = (90, 255, 89)
+    mask_green = cv2.inRange(hsv_image.copy(), lower_green, upper_green).astype('uint8')
 
     # combine masks
-    mask = cv2.bitwise_or(mask_marker.copy(), mask_dlo.copy())
+    mask = cv2.bitwise_or(mask_green.copy(), mask_dlo.copy())
 
     # filter mask base on depth values
-    mask[cur_depth < 0.58*1000] = 0
+    mask[cur_depth < 0.57*1000] = 0
 
     return mask
 
@@ -100,7 +95,7 @@ def callback (rgb, depth):
         extracted_chains_3d = extracted_chains_3d[((extracted_chains_3d[:, 0] != 0) | (extracted_chains_3d[:, 1] != 0) | (extracted_chains_3d[:, 2] != 0))]
 
         if multi_color_dlo:
-            depth_threshold = 0.58  # m
+            depth_threshold = 0.57  # m
             extracted_chains_3d = extracted_chains_3d[extracted_chains_3d[:, 2] > depth_threshold]
 
         # tck, u = interpolate.splprep(extracted_chains_3d.T, s=0.001)
@@ -119,7 +114,8 @@ def callback (rgb, depth):
 
         init_nodes = spline_pts[np.linspace(0, num_true_pts-1, num_of_nodes).astype(int)]
 
-        results = ndarray2MarkerArray(init_nodes, result_frame_id, [1, 150/255, 0, 0.75], [0, 1, 0, 0.75])
+        # results = ndarray2MarkerArray(init_nodes, result_frame_id, [1, 150/255, 0, 0.75], [0, 1, 0, 0.75])
+        results = ndarray2MarkerArray(init_nodes, result_frame_id, [0, 149/255, 203/255, 0.75], [0, 149/255, 203/255, 0.75])
         results_pub.publish(results)
 
         # add color
@@ -131,7 +127,6 @@ def callback (rgb, depth):
         header.stamp = rospy.Time.now()
         converted_points = pcl2.create_cloud(header, fields, pc_colored)
         pc_pub.publish(converted_points)
-        # rospy.signal_shutdown('Finished initial node set computation.')
     except:
         rospy.logerr("Failed to extract splines.")
         rospy.signal_shutdown('Stopping initialization.')
