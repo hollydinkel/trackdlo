@@ -41,7 +41,7 @@ def color_thresholding (hsv_image, cur_depth):
     # filter mask base on depth values
     mask[cur_depth < 0.57*1000] = 0
 
-    return mask
+    return mask, mask_green
 
 def callback (rgb, depth):
     global lower, upper
@@ -60,8 +60,7 @@ def callback (rgb, depth):
         mask = cv2.inRange(hsv_image, lower, upper)
     else:
         # color thresholding
-        mask = color_thresholding(hsv_image, cur_depth)
-
+        mask, mask_tip = color_thresholding(hsv_image, cur_depth)
     try:
         start_time = time.time()
         mask = cv2.cvtColor(mask.copy(), cv2.COLOR_GRAY2BGR)
@@ -84,6 +83,11 @@ def callback (rgb, depth):
         cy = proj_matrix[1, 2]
         pixel_x = all_pixel_coords[:, 1]
         pixel_y = all_pixel_coords[:, 0]
+        # if the first mask value is not in the tip mask, reverse the pixel order
+        if multi_color_dlo:
+            pixel_value1 = mask_tip[pixel_y[0],pixel_x[0]]
+            if pixel_value1 == 0:
+                pixel_x, pixel_y = pixel_x[::-1], pixel_y[::-1]
 
         pc_x = (pixel_x - cx) * pc_z / f
         pc_y = (pixel_y - cy) * pc_z / f
@@ -110,7 +114,6 @@ def callback (rgb, depth):
         u_fine = np.linspace(0, 1, num_true_pts) # <-- num true points
         x_fine, y_fine, z_fine = interpolate.splev(u_fine, tck)
         spline_pts = np.vstack((x_fine, y_fine, z_fine)).T
-        total_spline_len = np.sum(np.sqrt(np.sum(np.square(np.diff(spline_pts, axis=0)), axis=1)))
 
         init_nodes = spline_pts[np.linspace(0, num_true_pts-1, num_of_nodes).astype(int)]
 
@@ -134,7 +137,7 @@ def callback (rgb, depth):
 if __name__=='__main__':
     rospy.init_node('init_tracker', anonymous=True)
 
-    global new_messages
+    global new_messages, lower, upper
     new_messages=False
 
     num_of_nodes = rospy.get_param('/init_tracker/num_of_nodes')
