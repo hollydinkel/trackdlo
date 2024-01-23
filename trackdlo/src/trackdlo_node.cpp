@@ -322,11 +322,14 @@ sensor_msgs::ImagePtr Callback(const sensor_msgs::ImageConstPtr& image_msg, cons
             }
 
             // add edges for checking overlap with upcoming nodes
-            double x1 = col_1;
-            double y1 = row_1;
-            double x2 = col_2;
-            double y2 = row_2;
-            cv::line(projected_edges, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 255, 255), dlo_pixel_width);
+            cv::line(projected_edges, cv::Point(col_1, row_1), cv::Point(col_2, row_2), cv::Scalar(255, 255, 255), dlo_pixel_width);
+        }
+        
+        // obtain self-occluded nodes
+        for (int i = 0; i < Y.rows(); i ++) {
+            if (std::find(not_self_occluded_nodes.begin(), not_self_occluded_nodes.end(), i) == not_self_occluded_nodes.end()) {
+                self_occluded_nodes.push_back(i);
+            }
         }
 
         // sort visible nodes to preserve the original connectivity
