@@ -43,6 +43,13 @@ def color_thresholding (hsv_image, cur_depth):
 
     return mask, mask_green
 
+def remove_duplicate_rows(array):
+    _, idx = np.unique(array, axis=0, return_index=True)
+    data = array[np.sort(idx)]
+    rospy.set_param('/init_tracker/num_of_nodes', len(data))
+    
+    return data
+
 def callback (rgb, depth):
     global lower, upper
 
@@ -115,8 +122,10 @@ def callback (rgb, depth):
         x_fine, y_fine, z_fine = interpolate.splev(u_fine, tck)
         spline_pts = np.vstack((x_fine, y_fine, z_fine)).T
 
-        init_nodes = spline_pts[np.linspace(0, num_true_pts-1, num_of_nodes).astype(int)]
+        nodes = spline_pts[np.linspace(0, num_true_pts-1, num_of_nodes).astype(int)]
 
+        init_nodes = remove_duplicate_rows(nodes)
+        
         # results = ndarray2MarkerArray(init_nodes, result_frame_id, [1, 150/255, 0, 0.75], [0, 1, 0, 0.75])
         results = ndarray2MarkerArray(init_nodes, result_frame_id, [0, 149/255, 203/255, 0.75], [0, 149/255, 203/255, 0.75])
         results_pub.publish(results)

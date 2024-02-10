@@ -12,7 +12,7 @@ def pt2pt_dis_sq(pt1, pt2):
     return np.sum(np.square(pt1 - pt2))
 
 def pt2pt_dis(pt1, pt2):
-    return np.sqrt(np.sum(np.square(pt1 - pt2)))
+    return np.linalg.norm(pt1-pt2)
 
 # from geeksforgeeks: https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
 class Point_2D:
@@ -175,7 +175,7 @@ def extract_connected_skeleton (visualize_process, mask, img_scale=10, seg_lengt
                 cv2.destroyAllWindows()
                 break
     
-    # perform skeletonization
+    # skeletonization
     result = skeletonize(mask, method='zha')
     gray = cv2.cvtColor(result.copy(), cv2.COLOR_BGR2GRAY)
     gray[gray > 100] = 255
