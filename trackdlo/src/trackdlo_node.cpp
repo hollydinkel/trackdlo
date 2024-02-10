@@ -86,34 +86,21 @@ double pub_data_total = 0;
 int frames = 0;
 
 Mat color_thresholding (Mat cur_image_hsv) {
-    std::vector<int> lower_blue = {90, 90, 60};
+    std::vector<int> lower_blue = {90, 90, 30};
     std::vector<int> upper_blue = {130, 255, 255};
 
-    std::vector<int> lower_red_1 = {130, 60, 50};
-    std::vector<int> upper_red_1 = {255, 255, 255};
+    std::vector<int> lower_green = {58, 130, 50};
+    std::vector<int> upper_green = {90, 255, 255};
 
-    std::vector<int> lower_red_2 = {0, 60, 50};
-    std::vector<int> upper_red_2 = {10, 255, 255};
 
-    std::vector<int> lower_yellow = {15, 100, 80};
-    std::vector<int> upper_yellow = {40, 255, 255};
+    Mat mask_blue, mask_green, mask;
 
-    Mat mask_blue, mask_red_1, mask_red_2, mask_red, mask_yellow, mask;
     // filter blue
     cv::inRange(cur_image_hsv, cv::Scalar(lower_blue[0], lower_blue[1], lower_blue[2]), cv::Scalar(upper_blue[0], upper_blue[1], upper_blue[2]), mask_blue);
 
-    // filter red
-    cv::inRange(cur_image_hsv, cv::Scalar(lower_red_1[0], lower_red_1[1], lower_red_1[2]), cv::Scalar(upper_red_1[0], upper_red_1[1], upper_red_1[2]), mask_red_1);
-    cv::inRange(cur_image_hsv, cv::Scalar(lower_red_2[0], lower_red_2[1], lower_red_2[2]), cv::Scalar(upper_red_2[0], upper_red_2[1], upper_red_2[2]), mask_red_2);
+    cv::inRange(cur_image_hsv, cv::Scalar(lower_green[0], lower_green[1], lower_green[2]), cv::Scalar(upper_green[0], upper_green[1], upper_green[2]), mask_green);
 
-    // filter yellow
-    cv::inRange(cur_image_hsv, cv::Scalar(lower_yellow[0], lower_yellow[1], lower_yellow[2]), cv::Scalar(upper_yellow[0], upper_yellow[1], upper_yellow[2]), mask_yellow);
-
-    // combine red mask
-    cv::bitwise_or(mask_red_1, mask_red_2, mask_red);
-    // combine overall mask
-    cv::bitwise_or(mask_red, mask_blue, mask);
-    cv::bitwise_or(mask_yellow, mask, mask);
+    cv::bitwise_or(mask_green, mask_blue, mask);
 
     return mask;
 }
@@ -335,11 +322,14 @@ sensor_msgs::ImagePtr Callback(const sensor_msgs::ImageConstPtr& image_msg, cons
             }
 
             // add edges for checking overlap with upcoming nodes
-            double x1 = col_1;
-            double y1 = row_1;
-            double x2 = col_2;
-            double y2 = row_2;
-            cv::line(projected_edges, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 255, 255), dlo_pixel_width);
+            cv::line(projected_edges, cv::Point(col_1, row_1), cv::Point(col_2, row_2), cv::Scalar(255, 255, 255), dlo_pixel_width);
+        }
+        
+        // obtain self-occluded nodes
+        for (int i = 0; i < Y.rows(); i ++) {
+            if (std::find(not_self_occluded_nodes.begin(), not_self_occluded_nodes.end(), i) == not_self_occluded_nodes.end()) {
+                self_occluded_nodes.push_back(i);
+            }
         }
 
         // sort visible nodes to preserve the original connectivity
@@ -410,8 +400,8 @@ sensor_msgs::ImagePtr Callback(const sensor_msgs::ImageConstPtr& image_msg, cons
             cv::Scalar line_color;
 
             if (std::find(vis.begin(), vis.end(), idx) != vis.end()) {
-                point_color = cv::Scalar(0, 150, 255);
-                line_color = cv::Scalar(0, 255, 0);
+                point_color = cv::Scalar(203, 149, 0);
+                line_color = cv::Scalar(203, 149, 0);
             }
             else {
                 point_color = cv::Scalar(0, 0, 255);
@@ -421,7 +411,7 @@ sensor_msgs::ImagePtr Callback(const sensor_msgs::ImageConstPtr& image_msg, cons
                     line_color = cv::Scalar(0, 0, 255);
                 }
                 else {
-                    line_color = cv::Scalar(0, 255, 0);
+                    line_color = cv::Scalar(203, 149, 0);
                 }
             }
 
@@ -433,7 +423,7 @@ sensor_msgs::ImagePtr Callback(const sensor_msgs::ImageConstPtr& image_msg, cons
             cv::circle(tracking_img, cv::Point(x, y), 7, point_color, -1);
 
             if (std::find(vis.begin(), vis.end(), idx+1) != vis.end()) {
-                point_color = cv::Scalar(0, 150, 255);
+                point_color = cv::Scalar(203, 149, 0);
             }
             else {
                 point_color = cv::Scalar(0, 0, 255);
@@ -452,7 +442,7 @@ sensor_msgs::ImagePtr Callback(const sensor_msgs::ImageConstPtr& image_msg, cons
         tracking_img_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", tracking_img).toImageMsg();
 
         // publish the results as a marker array
-        visualization_msgs::MarkerArray results = MatrixXd2MarkerArray(Y, result_frame_id, "node_results", {1.0, 150.0/255.0, 0.0, 1.0}, {0.0, 1.0, 0.0, 1.0}, 0.01, 0.005, vis, {1.0, 0.0, 0.0, 1.0}, {1.0, 0.0, 0.0, 1.0});
+        visualization_msgs::MarkerArray results = MatrixXd2MarkerArray(Y, result_frame_id, "node_results", {0.0, 149.0/255.0, 203.0/255.0, 1.0}, {0.0, 149.0/255.0, 203.0/255.0, 1.0}, 0.01, 0.005, vis, {1.0, 0.0, 0.0, 1.0}, {1.0, 0.0, 0.0, 1.0});
         // visualization_msgs::MarkerArray results = MatrixXd2MarkerArray(Y, result_frame_id, "node_results", {1.0, 150.0/255.0, 0.0, 1.0}, {0.0, 1.0, 0.0, 1.0}, 0.01, 0.005);
         visualization_msgs::MarkerArray guide_nodes_results = MatrixXd2MarkerArray(guide_nodes, result_frame_id, "guide_node_results", {0.0, 0.0, 0.0, 0.5}, {0.0, 0.0, 1.0, 0.5});
         visualization_msgs::MarkerArray corr_priors_results = MatrixXd2MarkerArray(priors, result_frame_id, "corr_prior_results", {0.0, 0.0, 0.0, 0.5}, {1.0, 0.0, 0.0, 0.5});
@@ -600,7 +590,6 @@ int main(int argc, char **argv) {
     init_nodes_sub = nh.subscribe("/trackdlo/init_nodes", 1, update_init_nodes);
     camera_info_sub = nh.subscribe(camera_info_topic, 1, update_camera_info);
 
-    image_transport::Publisher mask_pub = it.advertise("/trackdlo/mask", pub_queue_size);
     image_transport::Publisher tracking_img_pub = it.advertise("/trackdlo/results_img", pub_queue_size);
     pc_pub = nh.advertise<sensor_msgs::PointCloud2>("/trackdlo/filtered_pointcloud", pub_queue_size);
     results_pub = nh.advertise<visualization_msgs::MarkerArray>("/trackdlo/results_marker", pub_queue_size);

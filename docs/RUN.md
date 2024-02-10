@@ -124,4 +124,4 @@ The ROS bag files used in our paper and the supplementary video can be found [he
 ### Notes on Running the Bag Files
 
 * The rope and the rubber tubing require different hsv thresholding values. Both of these objects use the `hsv_threshold_upper_limit` default value = `130 255 255` however the rope uses the `hsv_threshold_lower_limit` default value = `90 90 30` and the rubber tubing uses the `hsv_threshold_upper_limit` default value = `100 200 60`.
-* For `.bag` files in `rope/`, `rubber_tubing/`, and `failure_cases/`, the `camera_info_topic` is published under `/camera/aligned_depth_to_color/camera_info`. For `.bag` files in `quantitative_eval/`, the `camera_info_topic` is published under `/camera/color/camera_info`. 
+* For `.bag` files in `rope/`, `rubber_tubing/`, and `failure_cases/`, the `camera_info_topic` is published under `/camera/aligned_depth_to_color/camera_info`. For `.bag` files in `quantitative_eval/`, the `camera_info_topic` is published under `/camera/color/camera_info`.
