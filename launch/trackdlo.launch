@@ -10,9 +10,10 @@
     <arg name="visualize_initialization_process" default="false" />
     <arg name="multi_color_dlo" default="true" />
     <arg name="output" default="screen" />
+    <arg name="respawn" default="true"/>
 
     <!-- load parameters to corresponding nodes -->
-    <node name="trackdlo" pkg="trackdlo" type="trackdlo" output="$(arg output)" respawn="true">
+    <node name="trackdlo" pkg="trackdlo" type="trackdlo" output="$(arg output)" respawn="$(arg respawn)">
         <param name="camera_info_topic" type="string" value="$(arg camera_info_topic)" />
         <param name="rgb_topic" type="string" value="$(arg rgb_topic)" />
         <param name="depth_topic" type="string" value="$(arg depth_topic)" />
@@ -59,7 +60,7 @@
     </node>
 
     <!-- launch python node for initialization -->
-    <node name="init_tracker" pkg="trackdlo" type="initialize.py" output="$(arg output)" respawn="true">
+    <node name="init_tracker" pkg="trackdlo" type="initialize.py" output="$(arg output)" respawn="$(arg respawn)">
         <param name="camera_info_topic" type="string" value="$(arg camera_info_topic)" />
         <param name="rgb_topic" type="string" value="$(arg rgb_topic)" />
         <param name="depth_topic" type="string" value="$(arg depth_topic)" />
