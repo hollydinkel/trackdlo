@@ -39,7 +39,7 @@ def color_thresholding (hsv_image, cur_depth):
     mask = cv2.bitwise_or(mask_green.copy(), mask_dlo.copy())
 
     # filter mask base on depth values
-    mask[cur_depth < 0.57*1000] = 0
+    mask[cur_depth < depth_filter*1000] = 0
 
     return mask, mask_green
 
@@ -107,7 +107,7 @@ def callback (rgb, depth):
         extracted_chains_3d = extracted_chains_3d[((extracted_chains_3d[:, 0] != 0) | (extracted_chains_3d[:, 1] != 0) | (extracted_chains_3d[:, 2] != 0))]
 
         if multi_color_dlo:
-            depth_threshold = 0.57  # m
+            depth_threshold = depth_filter  # in meters
             extracted_chains_3d = extracted_chains_3d[extracted_chains_3d[:, 2] > depth_threshold]
 
         # tck, u = interpolate.splprep(extracted_chains_3d.T, s=0.001)
@@ -151,6 +151,7 @@ if __name__=='__main__':
     new_messages=False
 
     num_of_nodes = rospy.get_param('/init_tracker/num_of_nodes')
+    depth_filter = rospy.get_param('/init_tracker/depth_filter')
     multi_color_dlo = rospy.get_param('/init_tracker/multi_color_dlo')
     camera_info_topic = rospy.get_param('/init_tracker/camera_info_topic')
     rgb_topic = rospy.get_param('/init_tracker/rgb_topic')

@@ -6,11 +6,12 @@
     <arg name="result_frame_id" default="camera_color_optical_frame" />    
     <arg name="hsv_threshold_upper_limit" default="130 255 255" />
     <arg name="hsv_threshold_lower_limit" default="90 90 30" />
-    <arg name="num_of_nodes" default="31" />
+    <arg name="num_of_nodes" default="29" />
     <arg name="visualize_initialization_process" default="false" />
     <arg name="multi_color_dlo" default="true" />
     <arg name="output" default="screen" />
     <arg name="respawn" default="true"/>
+    <arg name="depth_filter" default="0.57"/>
 
     <!-- load parameters to corresponding nodes -->
     <node name="trackdlo" pkg="trackdlo" type="trackdlo" output="$(arg output)" respawn="$(arg respawn)">
@@ -67,6 +68,7 @@
         <param name="result_frame_id" type="string" value="$(arg result_frame_id)" />
 
         <param name="num_of_nodes" value="$(arg num_of_nodes)" />
+        <param name="depth_filter" value="$(arg depth_filter)" />
         <param name="multi_color_dlo" type="bool" value="$(arg multi_color_dlo)" />
         <param name="visualize_initialization_process" type="bool" value="$(arg visualize_initialization_process)" />
 
